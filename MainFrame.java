@@ -60,12 +60,13 @@ public class MainFrame extends JFrame {
         // Initialize book catalog
         catalog = new BookCatalog();
 
+
         // Initialize GUI components
         fileNameField = new JTextField(20);
-        loadFileButton = new JButton("Load File");
+
         databaseTextArea = new JTextArea();
         databaseTextArea.setEditable(false);
-
+        JButton loadDatabaseButton = new JButton("Load Books from Database");
         barcodeField = new JTextField(10);
         removeByBarcodeButton = new JButton("Remove by Barcode");
         titleField = new JTextField(20);
@@ -76,15 +77,7 @@ public class MainFrame extends JFrame {
         checkInTitleField = new JTextField(20);
         checkInButton = new JButton("Check In");
 
-        // Load books from database
-        loadBooksFromDatabase();
-        // Load file button action listener
-        loadFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadBooksFromDatabase(); // Call the method to load books from the database
-            }
-        });
+
 
 
         // Remove by barcode button action listener
@@ -126,12 +119,35 @@ public class MainFrame extends JFrame {
         // Layout setup
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel inputPanel = new JPanel();
+        JLabel databaseLabel = new JLabel("Enter database name: ");
 
-        inputPanel.add(new JLabel("Enter file name: "));
-        inputPanel.add(fileNameField);
-        inputPanel.add(loadFileButton);
+        //inputPanel.add(new JLabel("Enter database name: "));
+        JTextField databaseNameField = new JTextField(20); // Text field for database name
+        inputPanel.add(loadDatabaseButton);
+
+        // Action listener for the load database button
+        loadDatabaseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get the database name entered by the user
+                String databaseName = databaseNameField.getText();
+                loadBooksFromDatabase(); // Call the method to load books from the specified database
+            }
+        });
+
+        // Add components to inputPanel
+        inputPanel.add(databaseLabel);
+        inputPanel.add(databaseNameField);
+        inputPanel.add(loadDatabaseButton);
+
+        // Add inputPanel to mainPanel
         mainPanel.add(inputPanel, BorderLayout.NORTH);
-        mainPanel.add(new JScrollPane(databaseTextArea), BorderLayout.CENTER);
+
+// Set mainPanel as the content pane of the frame
+        setContentPane(mainPanel);
+
+// Make the frame visible
+        setVisible(true);
 
         JPanel actionsPanel = new JPanel(new GridLayout(4, 1)); // 4 rows, 1 column
         actionsPanel.add(new JLabel("Enter barcode to remove: "));
@@ -168,12 +184,17 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
+
+
+
     // 1. loadBooksFromDatabase
     // 2. This method loads book information from a MySQL database and updates the BookCatalog accordingly. It retrieves data from the "books" table, creates Book objects, and adds them to the catalog.
     // 3. This method doesn't take any arguments.
     // 4. It doesn't return any value (void).
     private void loadBooksFromDatabase() {
         try {
+            // Modify the SQL query to include the database name dynamically
+
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM books");
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -192,6 +213,7 @@ public class MainFrame extends JFrame {
             e.printStackTrace();
         }
     }
+
 
 
     // 1. removeBookByBarcode
@@ -300,3 +322,4 @@ public class MainFrame extends JFrame {
         });
     }
 }
+    
